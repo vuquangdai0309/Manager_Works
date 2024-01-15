@@ -1,0 +1,50 @@
+{{>sidebar}}
+<div id="right-panel" class="right-panel">
+    {{> header}}
+    <div class="content mt-3">
+        <button type="button" class="btn" data-bs-toggle="modal" data-bs-target="#exampleModal"
+            data-bs-whatever="@mdo"><i class="bi bi-plus-square"></i>&nbsp; Tạo Bảng</button>
+    </div>
+    <div class="content mt-3">
+        {{#each work}}
+        <a href="/work/{{this.slug}}/detail">
+            <div class="col-sm-6 col-lg-3 mohover">
+                <div class="card text-white bg-success">
+                    <div class="card-body pb-0">
+                        <h3> {{this.title}}</h3>
+                        <br>
+                        <p class="text-light">Ngày bắt đầu: {{this.date}}</p>               
+                        <div class="chart-wrapper px-0" style="height:70px;" >
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </a>
+        {{/each}}
+    </div>
+</div>
+
+{{!-- modle thêm --}}
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Tạo Bảng</h3>
+            </div>
+            <div class="modal-body">
+                <form action="/work" method="POST">
+                    <div class="mb-3">
+                        <label for="recipient-name" class="col-form-label">Tiêu đề:</label>
+                        <input type="text" name="title" class="form-control">
+                    </div>
+                    
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Thoát</button>
+                        <button type="submit" class="btn btn-success">Bắt đầu với mẫu</button>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>

@@ -1,0 +1,81 @@
+.box-small-1:hover {
+
+    background-color: rgb(255, 255, 255);
+    border: 1px solid rgb(39, 111, 255);
+}
+.box-small-1{
+    
+    border: 1px solid rgb(247, 247, 247);
+    box-shadow: 0 0 5px rgba(121, 121, 121, 0.5);
+}
+
+.mohover {
+    transition: opacity 0.5s;
+    /* Thêm hiệu ứng chuyển động trong 0.5 giây */
+}
+
+.mohover:hover {
+    opacity: 0.7;
+    /* Đặt độ mờ khi hover */
+}
+
+.hiddenDiv {
+    display: none;
+    /* Ẩn thẻ div mặc định */
+}
+
+.toggleButton {
+    float: left;
+    color: rgb(110, 110, 110);
+
+}
+
+.toggleDelete {
+    display: none;
+    color: rgb(255, 0, 0);
+    font-size: 30px;
+    float: left;
+    margin-left: 30px;
+}
+
+.message-title {
+    color: red;
+    font-size: 12px;
+}
+
+
+#hiddenDiv {
+    display: none;
+    /* Ẩn thẻ div mặc định */
+}
+
+#toggleButton {
+    float: left;
+    color: rgb(110, 110, 110);
+
+}
+
+#toggleDelete {
+    display: none;
+    color: rgb(255, 0, 0);
+    font-size: 30px;
+    float: left;
+    margin-left: 30px;
+}
+
+#message-title {
+    color: red;
+    font-size: 12px;
+}
+#myButtonSave{
+    display: none;
+}
+#myButtonSend{
+    display: none;
+}
+.border-comment{
+    border: 1px solid rgb(243, 243, 243);
+    border-radius: 5px;
+    background-color: white;
+    box-shadow: 0 0 5px rgba(121, 121, 121, 0.5);
+}

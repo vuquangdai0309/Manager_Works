@@ -1,0 +1,254 @@
+{{>sidebar}}
+<div id="right-panel" class="right-panel" style="z-index: -1;  background: url('/img/background1.jpg') ; 
+  background-size: cover;">
+    {{> header}}
+    <div id="content" slug_Work="{{work.slug}}">
+        <div class="col-sm-12">
+            <div class="page-header float-left" style="background-color: rgba(232, 232, 232, 0.305); color:white ;">
+                <div class="page-title">
+                    <h1 style="font-weight:600">{{work.title}}</h1>
+                </div>
+            </div>
+        </div>
+
+        <div class="content mt-3 ">
+
+            <div class="row">
+                {{#each works}}
+                <div class="col-sm-8 col-lg-3 mb-3">
+                    <div class="card  bg-flat-color-6">
+                        <div class="col-md-12">
+                            <br>
+                            <h5 style="font-weight: 600; margin-bottom: 10px;">{{child_work_title}}</h5>
+
+                        </div>
+                        {{#each progress_works}}
+
+                        <div class="col-sm-12 text-black ">
+                            <div class="card box-small-1" style="margin-top: 0.5rem;">
+                                <div class="stat-widget-one ">
+                                    <div class="row">
+                                        <button onclick="changePage({{progress_work_id}})" id="btn-{{progress_work_id}}"
+                                            slug="{{progress_work_slug}}" class="col-lg-12 col-12 text-left">
+                                            <div class="stat-content dib" style="margin-bottom: 10px;">
+                                                <div class="stat-text">{{progress_work_title}}
+                                                </div>
+                                                <span class="badge  " style="background-color:#216e4e ;color:white"> <i
+                                                        class="bi bi-clock-fill"></i> 4/2/2001</span>
+
+                                                <span class="badge badge-pill badge-light"><i class="bi bi-chat">
+                                                        {{comment_count}}</i></span>
+                                            </div>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {{/each}}
+                        <br>
+
+                        <div class="form-group content hiddenDiv" id="hiddenDiv-{{child_work_id}}">
+                            <label for="comment">Tiêu Đề Thẻ:</label>
+                            <textarea class="form-control" rows="3" id="comment-{{child_work_id}}"></textarea>
+                            <div class="message-title" id="message-title-{{child_work_id}}"></div>
+                        </div>
+                        <div class="content">
+                            <button type="button" onclick="toggleButton('{{child_work_id}}')"
+                                id="toggleButton-{{child_work_id}}" data-id="{{child_work_id}}"
+                                class="btn  toggleButton"><i class="bi bi-plus-square"></i>&nbsp;
+                                Tạo
+                                Thẻ</button>
+                            <div class="toggleDelete" onclick="toggleDelete('{{child_work_id}}')"
+                                id="toggleDelete-{{child_work_id}}">
+                                <i class="bi bi-x-square-fill"></i>
+                            </div>
+                            <button type="button" class="btn " data-bs-toggle="modal-edit"
+                                data-bs-target="#exampleModal" data-id="{{child_work_id}}"
+                                style="color: rgb(41, 92, 25); float:right">
+                                <i class="bi bi-pen-fill"></i>
+                            </button>
+                        </div>
+
+                        <br>
+                    </div>
+                </div>
+                {{/each}}
+
+                <div class="col-sm-8 col-lg-3 mb-3">
+                    <div class="card  bg-flat-color-7">
+                        <div class="col-md-12">
+                        </div>
+                        <br>
+                        <div class="form-group content" id="hiddenDiv">
+                            <label for="comment">Tên danh sách:</label>
+                            <textarea class="form-control" rows="3" id="comment"></textarea>
+                            <div id="message-title"></div>
+                        </div>
+                        <div class="content">
+                            <button type="button" id="toggleButton" data-id="{{work._id}}" slug="{{work.slug}}"
+                                class="btn"><i class="bi bi-plus-square"></i>&nbsp; Thêm Mới
+                            </button>
+                            <div id="toggleDelete">
+                                <i class="bi bi-x-square-fill"></i>
+                            </div>
+                        </div>
+                        <br>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+<script>
+    function changePage(ProgressId) {
+        const getContent = document.getElementById('content')
+        const progressId = document.getElementById('btn-' + ProgressId)
+        const getSlug = progressId.getAttribute('slug')
+        const slugWork = getContent.getAttribute('slug_Work')
+
+
+        // lấy slug work lưu vào sessionStorage
+        sessionStorage.setItem('contentSlugWork', slugWork);
+        // Lưu nội dung vào sessionStorage
+        sessionStorage.setItem('contentProgress', getContent.innerHTML);
+
+        // Chuyển hướng đến trang edit
+        window.location.href = `/work/${getSlug}/edit`;
+    }
+</script>
+
+
+{{!-- [PUT] chỉnh sửa dữ liệu --}}
+<script>
+    const exampleModal = document.getElementById('exampleModal')
+    if (exampleModal) {
+        exampleModal.addEventListener('show.bs.modal', event => {
+            const button = event.relatedTarget
+            const recipient = button.getAttribute('data-bs-id')
+            console.log(recipient)
+            const btn_accept = document.getElementById('btn_accept')
+            btn_accept.onclick = function () {
+
+            }
+
+        })
+    }
+</script>
+
+
+<script>
+    // var form = document.getElementById('form-create')
+    document.getElementById('toggleButton').addEventListener('click', function (event) {
+        var toggleButton = document.getElementById('toggleButton')
+        var data_id = toggleButton.getAttribute('data-id')
+        var slug = toggleButton.getAttribute('slug')
+        var hiddenDiv = document.getElementById('hiddenDiv');
+        var toggleDelete = document.getElementById('toggleDelete');
+        var message = document.getElementById('message-title');
+        var title = document.getElementById('comment').value
+        // Toggle display property của thẻ div
+        if (hiddenDiv.style.display === 'none' || hiddenDiv.style.display === '') {
+            hiddenDiv.style.display = 'block';
+            toggleDelete.style.display = 'block'
+            // Thay đổi màu của nút
+            this.style.backgroundColor = 'green'; // Đổi màu 
+            this.style.color = 'white'
+        }
+        else {
+            if (title === '') {
+                message.innerHTML = 'Vui lòng nhập tên danh sách'
+            }
+            else {
+                event.preventDefault()
+                $.ajax({
+                    url: '/work/createChild',
+                    type: 'POST',
+                    data: {
+                        title: title,
+                        work_id: data_id
+                    }
+                })
+                    .then(data => {
+                        //  window.history.back();
+                        window.location.replace(`/work/${slug}/detail`)
+                    })
+            }
+        }
+    });
+    document.getElementById('toggleDelete').addEventListener('click', function () {
+
+        var hiddenDiv = document.getElementById('hiddenDiv');
+        var toggleDelete = document.getElementById('toggleDelete');
+        var toggleButton = document.getElementById('toggleButton');
+        // Toggle display property của thẻ div
+        if (hiddenDiv.style.display === 'block') {
+            hiddenDiv.style.display = 'none';
+            toggleDelete.style.display = 'none'
+            // Thay đổi màu của nút
+            toggleButton.style.backgroundColor = 'initial'; // Đổi màu 
+            toggleButton.style.color = 'rgb(110, 110, 110)'
+        }
+    });
+</script>
+
+<script>
+    function toggleButton(WorkId) {
+        var toggleButton = document.getElementById('toggleButton-' + WorkId)
+        var data_id = toggleButton.getAttribute('data-id')
+        var hiddenDiv = document.getElementById('hiddenDiv-' + WorkId);
+        var toggleDelete = document.getElementById('toggleDelete-' + WorkId);
+
+        var getSlug = document.getElementById('toggleButton')
+        var slug = getSlug.getAttribute('slug')
+
+        var message = document.getElementById('message-title-' + WorkId);
+        var title = document.getElementById('comment-' + WorkId).value
+        // Toggle display property của thẻ div
+        if (hiddenDiv.style.display === 'none' || hiddenDiv.style.display === '') {
+            hiddenDiv.style.display = 'block';
+
+            toggleDelete.style.display = 'block'
+            // Thay đổi màu của nút
+            toggleButton.style.backgroundColor = 'green'; // Đổi màu
+            toggleButton.style.color = 'white'
+        }
+        else {
+            if (title === '') {
+                message.innerHTML = 'Vui lòng nhập tiêu đề'
+            }
+            else {
+                event.preventDefault()
+                $.ajax({
+                    url: '/work/detail',
+                    type: 'POST',
+                    data: {
+                        title: title,
+                        child_work_id: data_id
+                    }
+                })
+                    .then(data => {
+
+                        window.location.replace(`/work/${slug}/detail`)
+                    })
+            }
+        }
+    }
+
+    function toggleDelete(WorkId) {
+        var hiddenDiv = document.getElementById('hiddenDiv-' + WorkId);
+        var toggleDelete = document.getElementById('toggleDelete-' + WorkId);
+        var toggleButton = document.getElementById('toggleButton-' + WorkId);
+        // Toggle display property của thẻ div
+        if (hiddenDiv.style.display === 'block') {
+            hiddenDiv.style.display = 'none';
+            toggleDelete.style.display = 'none'
+            // Thay đổi màu của nút
+            toggleButton.style.backgroundColor = 'initial'; // Đổi màu
+            toggleButton.style.color = 'rgb(110, 110, 110)'
+        }
+    }
+
+
+
+</script>

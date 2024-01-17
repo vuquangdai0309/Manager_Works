@@ -20,6 +20,7 @@ class workController {
     }
     showEditProgress(req, res) {
         const slug = req.params.slug
+        const { formatDuration } = require('../middlewares/setTime')
         ProgressWork.getProgress_With_Slug(slug, (err, data) => {
             if (err) {
                 console.log('Lỗi truy vấn', err)
@@ -28,7 +29,18 @@ class workController {
                 if (err) {
                     console.log('Lỗi truy vấn', err)
                 } else {
-                    res.render('works/edit', { data: data[0], comment }, console.log(comment))
+                    const dataComment = comment.map(data => {
+                        const createdAt = moment(data.createAt);
+                        const duration = moment.duration(moment().diff(createdAt));
+                        const elapsedTime = formatDuration(duration)
+                        return {
+                            elapsedTime: elapsedTime,
+                            username: data.username,
+                            comment: data.comment
+                        }
+                    })
+
+                    res.render('works/edit', { data: data[0], dataComment: dataComment })
                 }
             })
 
@@ -56,7 +68,13 @@ class workController {
                                     child_work_id: row.child_work_id,
                                     child_work_title: row.child_work_title,
 
-                                    progress_works: [{ progress_work_id: row.progress_work_id, progress_work_title: row.progress_work_title, progress_work_slug: row.progress_work_slug, comment_count: row.comment_count, }]
+                                    progress_works: [{
+                                        progress_work_id: row.progress_work_id,
+                                        progress_work_title: row.progress_work_title,
+                                        progress_work_slug: row.progress_work_slug,
+                                        comment_count: row.comment_count,
+                                        progress_work_date: row.progress_work_date
+                                    }]
                                 })
                             } else {
                                 acc.push({
@@ -70,12 +88,18 @@ class workController {
                         }
                         else {
                             if (row.progress_work_id) {
-                                work.progress_works.push({ progress_work_id: row.progress_work_id, progress_work_title: row.progress_work_title, progress_work_slug: row.progress_work_slug, comment_count: row.comment_count })
+                                work.progress_works.push({
+                                    progress_work_id: row.progress_work_id,
+                                    progress_work_title: row.progress_work_title,
+                                    progress_work_slug: row.progress_work_slug,
+                                    comment_count: row.comment_count,
+                                    progress_work_date: row.progress_work_date
+                                })
                             }
                         }
                         return acc
                     }, [])
-                    res.render('works/progress_work', { works, work: work[0] }, console.log(works))
+                    res.render('works/progress_work', { works, work: work[0] })
                 }
             })
             // else {
@@ -91,7 +115,7 @@ class workController {
             slug: slugify(req.body.title, {
                 lower: true,
                 remove: /[*+~.()'"!:@]/g,
-            }) 
+            })
         }
         ChildWork.addChildWork(form, (err) => {
             if (err) {
@@ -100,6 +124,28 @@ class workController {
             else {
                 res.redirect('back')
             }
+        })
+    }
+    // update progress_work
+    updateProgressWork(req, res) {
+        const slug = req.params.slug
+        ProgressWork.getProgress_With_Slug(slug, (err, data) => {
+            if (err) {
+                console.log('Lỗi truy vấn', err)
+            }
+            const progress_work_id = data[0]._id
+            ProgressWork.update_Progress_work((progress_work_id), {
+                title: req.body.title,
+                date: moment().format('DD-MM-YYYY'),
+                slug: slugify(req.body.title, { lower: true }),
+            }, (err) => {
+                if (err) {
+                    console.log('Lỗi truy vấn')
+                }
+                else {
+                    res.redirect('back')
+                }
+            })
         })
     }
 

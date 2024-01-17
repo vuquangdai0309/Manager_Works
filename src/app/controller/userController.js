@@ -1,5 +1,6 @@
 const Room = require('../models/room')
 const Account = require('../models/user')
+const Role = require('../models/role')
 var jwt = require('jsonwebtoken');
 class UserController {
     // show form đăng nhập
@@ -77,6 +78,53 @@ class UserController {
                     }
                 })
             }
+        })
+    }
+    // [GET] get all User
+    store(req, res) {
+        Account.getAllUser((err, data) => {
+            if (err) {
+                console.log('Lỗi truy vấn', err)
+            }
+            else {
+                res.render('user/store', { data })
+            }
+        })
+    }
+    // [GET] form Edit
+    edit(req, res) {
+        const username = req.params.slug
+        Account.getAllUser_name(username, (err, data) => {
+            if (err) {
+                console.log('Lỗi truy vấn', err)
+            }
+            Role.getAllRole((err, role) => {
+                if (err) {
+                    console.log('Lỗi truy vấn', err)
+                }
+                else {
+                    res.render('user/edit', { data: data[0], role })
+                }
+            })
+        })
+    }
+    // [PUT]  update
+    update(req, res) {
+        const username = req.params.slug
+        console.log(username)
+        Account.getAllUser_name(username, (err, data) => {
+            if (err) {
+                console.log('Lỗi truy vấn', err)
+            }
+            Account.updateRole(data[0]._id, {
+                role_id: req.body.role_id
+            }, err => {
+                if (err) {
+                    console.log('Lỗi truy vấn', err)
+                }else{
+                    res.redirect('/user/store')
+                }
+            })
         })
     }
     // [GET] render formpass

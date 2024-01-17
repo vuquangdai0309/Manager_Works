@@ -7,6 +7,8 @@ const workController = require('../app/controller/workController')
 router.post('/createChild', workController.createChild_Work)
 // create progress work
 router.post('/detail', workController.createProgressWork)
+// put
+router.put('/:slug', workController.updateProgressWork)
 // show edit
 router.get('/:slug/edit', workController.showEditProgress)
 // show detail work

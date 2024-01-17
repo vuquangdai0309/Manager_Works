@@ -1,5 +1,26 @@
 const connection = require('../../config/db/index')
 const AccountModel = {
+    //lấy tất cả những bản ghi 
+    getAllUser: (callback) => {
+        const query = `SELECT account.*,
+        role.name AS nameRole,
+        room.name AS nameRoom
+        FROM account
+        JOIN role ON account.role_id = role._id
+        JOIN room ON account.room_id = room._id
+        `
+        connection.query(query, callback)
+    },
+    //lấy bản ghi theo tên
+    getAllUser_name: (username, callback) => {
+        const query = `SELECT account.*,
+        role.name AS nameRole
+        FROM account
+        JOIN role ON account.role_id = role._id
+        WHERE account.username = ?
+        `
+        connection.query(query,username, callback)
+    },
     //lấy thông tin dựa vào tên và email
     getAccountByNameorEmail: (UserName, UserEmail, callback) => {
         const query = 'SELECT * FROM account WHERE username = ? OR email = ?';
@@ -18,7 +39,7 @@ const AccountModel = {
 
     addAccount: (Account, callback) => {
         const query = 'INSERT INTO account (username,password,email,room_id) VALUES (?,?,?,?)';
-        const values = [Account.username, Account.password, Account.email,Account.room_id];
+        const values = [Account.username, Account.password, Account.email, Account.room_id];
         connection.query(query, values, callback);
     },
     //lấy thông tin tài khoản dựa vào id và email
@@ -32,6 +53,12 @@ const AccountModel = {
         const values = [Account.password, AccountId];
         connection.query(query, values, callback);
     },
+    // đổi chức vụ
+    updateRole: (AccountId, Account, callback) => {
+        const query = 'UPDATE account SET role_id = ? WHERE _id = ?  ';
+        const values = [Account.role_id, AccountId];
+        connection.query(query, values, callback);
+    },
     // lấy thông tin dựa vào email
     getAccountByEmail: (UserEmail, callback) => {
         const query = 'SELECT * FROM account WHERE email = ?';
@@ -43,8 +70,8 @@ const AccountModel = {
         const values = [Account.password, email];
         connection.query(query, values, callback);
     },
-   
-    
+
+
 };
 
 // Export model để sử dụng ở nơi khác trong ứng dụng

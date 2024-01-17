@@ -1,0 +1,56 @@
+{{>sidebar}}
+<div id="right-panel" class="right-panel">
+    {{> header}}
+    <div id="content" class="content mt-3">
+        <div class="animated fadeIn">
+            <div class="row">
+
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <strong class="card-title">Quản lý tài khoản</strong>
+                        </div>
+                        <div class="card-body">
+                            <table id="bootstrap-data-table-export" class="table table-striped table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>Tên tài khoản</th>
+                                        <th>Email</th>
+                                        <th>Chức vụ</th>
+                                        <th>Phòng ban</th>
+                                        <th>Chỉnh sửa</th>
+
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {{#each data}}
+                                    <tr>
+                                        <td>{{this.username}}</td>
+                                        <td>{{this.email}}</td>
+                                        <td>{{this.nameRole}}</td>
+                                        <td>{{this.nameRoom}}</td>
+                                        <td><i class="fa fa-edit" style="color: green; font-size:24px"
+                                                onclick="changePage({{this._id}})" id="getId_{{this._id}}" slug="{{this.username}}"></i></td>
+                                    </tr>
+                                    {{/each}}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div><!-- .animated -->
+    </div><!-- .content -->
+</div>
+<script>
+    function changePage(Id) {
+        const getId = document.getElementById('getId_' + Id)
+        const slug = getId.getAttribute('slug')
+        const getContent = document.getElementById('content')
+        // Lưu nội dung vào sessionStorage
+        sessionStorage.setItem('contentUser', getContent.innerHTML);
+
+        // Chuyển hướng đến trang edit
+        window.location.href = `/user/${slug}/edit`;
+    }
+</script>

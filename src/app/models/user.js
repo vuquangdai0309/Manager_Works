@@ -19,12 +19,16 @@ const AccountModel = {
         JOIN role ON account.role_id = role._id
         WHERE account.username = ?
         `
-        connection.query(query,username, callback)
+        connection.query(query, username, callback)
     },
     //lấy thông tin dựa vào tên và email
     getAccountByNameorEmail: (UserName, UserEmail, callback) => {
         const query = 'SELECT * FROM account WHERE username = ? OR email = ?';
         connection.query(query, [UserName, UserEmail], callback);
+    },
+    getAccountByEmail: (UserEmail, callback) => {
+        const query = 'SELECT * FROM account WHERE email = ?';
+        connection.query(query, [UserEmail], callback);
     },
     //lấy thông tin dựa vào tên và mật khẩu
     getAccountByNameAndPassword: (UserName, PassWord, callback) => {
@@ -70,7 +74,16 @@ const AccountModel = {
         const values = [Account.password, email];
         connection.query(query, values, callback);
     },
-
+    searchEmail: (email, callback) => {
+        const query = 'SELECT * FROM account WHERE email LIKE ?';
+        const values = ['%' + email + '%'];
+        connection.query(query, values, callback);
+    },
+    count_User: (callback) => {
+        const query = `SELECT COUNT(*) AS count
+        FROM account `
+        connection.query(query, callback)
+    },
 
 };
 

@@ -1,26 +1,62 @@
 {{>sidebar}}
-<div id="right-panel" class="right-panel">
+<div id="right-panel" class="right-panel" style="z-index: -1;  background: url('/img/background4.jpg') ; 
+  background-size: cover;">
     {{> header}}
     <div class="content mt-3">
-        <button type="button" class="btn" data-bs-toggle="modal" data-bs-target="#exampleModal"
+        <button type="button" class="btn text-white" data-bs-toggle="modal" data-bs-target="#exampleModal"
             data-bs-whatever="@mdo"><i class="bi bi-plus-square"></i>&nbsp; Tạo Bảng</button>
     </div>
-    <div class="content mt-3">
+    <div class="content mt-3 mb-3">
         {{#each work}}
         <a href="/work/{{this.slug}}/detail">
-            <div class="col-sm-6 col-lg-3 mohover">
-                <div class="card text-white bg-success">
+            <div class="col-sm-6 col-lg-3 mohover mb-3">
+                <div class="card text-white {{this.color}} ">
                     <div class="card-body pb-0">
                         <h3> {{this.title}}</h3>
                         <br>
-                        <p class="text-light">Ngày bắt đầu: {{this.date}}</p>               
-                        <div class="chart-wrapper px-0" style="height:70px;" >
+                        <p class="text-light">Ngày bắt đầu: {{this.date}}</p>
+                        <div class="chart-wrapper px-0" style="height:70px;">
                         </div>
                     </div>
                 </div>
             </div>
         </a>
         {{/each}}
+    </div>
+
+    <div class="col-md-12 d-flex justify-content-center mb-3">
+        <nav aria-label="Page navigation ">
+            <ul class="pagination">
+                {{#if pagination.prev}}
+                <li class="page-item">
+                    <a class="page-link" onclick="changePage({{pagination.prev}})" aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                    </a>
+                </li>
+                {{/if}}
+                {{#each pagination.pages as |page|}}
+                {{#if page.active}}
+                <li class="page-item active">
+                    <a class="page-link" onclick="changePage({{this.number}})">{{this.number}}</a>
+                </li>
+                {{else if page.isDots }}
+
+                {{else}}
+                <li class="page-item ">
+                    <a class="page-link" onclick="changePage({{this.number}})">{{this.number}}</a>
+                </li>
+                {{/if}}
+                {{/each}}
+
+                {{#if pagination.next}}
+                <li class="page-item">
+                    <a class="page-link" onclick="changePage({{pagination.next}})" aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                    </a>
+                </li>
+                {{/if}}
+            </ul>
+        </nav>
     </div>
 </div>
 
@@ -37,7 +73,17 @@
                         <label for="recipient-name" class="col-form-label">Tiêu đề:</label>
                         <input type="text" name="title" class="form-control">
                     </div>
-                    
+                    <div class="mb-3">
+                         <label for="recipient-name" class="col-form-label">Chọn màu sắc cho background:</label>
+                        <select class="form-select form-control" multiple aria-label="multiple select example" name="color">
+                            <option selected value="bg-success" class="bg-success mb-1"></option>
+                            <option value="bg-info" class="bg-info mb-1"></option>
+                            <option value="bg-warning" class="bg-warning mb-1"></option>
+                            <option value="bg-danger" class="bg-danger mb-1"></option>
+                             <option value="bg-primary" class="bg-primary mb-1"></option>
+                        </select>
+                    </div>
+
                     <div class="modal-footer">
                         <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Thoát</button>
                         <button type="submit" class="btn btn-success">Bắt đầu với mẫu</button>
@@ -48,3 +94,9 @@
         </div>
     </div>
 </div>
+<script>
+    function changePage(page) {
+        const searchTerm = document.getElementById('paginationForm').search.value = '{{searchTerm}}';
+        window.location.href = `/work/search?page=${page}&search=${searchTerm}`;
+    }
+</script>

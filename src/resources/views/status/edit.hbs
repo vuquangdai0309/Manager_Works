@@ -1,0 +1,108 @@
+{{>sidebar}}
+<div id="right-panel" class="right-panel">
+    {{> header}}
+    <div id="content"></div>
+    <div class="modal" id="myModal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <!-- Modal Header -->
+                <div class="modal-header">
+                    <h4 class="modal-title">Thay đổi trạng thái</h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <!-- Modal Body -->
+                <div class="modal-body" id="getIdForm" data="{{data._id}}">
+
+                    <div class="mb-3">
+                        <div class="row form-group">
+                            <div class="col col-md-3"><label for="select" class=" form-control-label">Trạng
+                                    thái </label></div>
+                            <div class="col-12 col-md-9">
+                                <select name="status" id="select" getValue="{{data.status_id}}" class="form-control">
+                                    {{#each status}}
+                                    <option value="{{this._id}}">{{this.name}}</option>
+                                    {{/each}}
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <button type="submit" onclick="subscribe()" class="btn btn-primary float-right">Xác
+                        nhận</button>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+<!-- Popper JS -->
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+
+<!-- Latest compiled JavaScript -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+
+    async function subscribe() {
+        // 
+        const getID = document.getElementById('getIdForm')
+        const id = getID.getAttribute('data')
+        const select = document.getElementById('select')
+
+        const registration = await navigator.serviceWorker.register('/sw.js');
+        const subscription = await registration.pushManager.subscribe({
+            userVisibleOnly: true,
+            applicationServerKey: 'BMbPBGi-4vO4WgZBbFzvSxLGf5tCJKRifhpFGVvYAxR2Z6a7Q-VrSCYVqeae7djAI4aNf0g038eXtz1btPnPL5g',
+        });
+
+        $.ajax({
+            url: `/status/${id}`,
+            type: 'PUT',
+            data: {
+                subscription: JSON.stringify(subscription),
+                status: select.value,
+            }
+        })
+            .then(data => {
+                window.location.replace(`/status`)
+            })
+
+
+        console.log('Subscription successful');
+    }
+
+
+
+    var contentStatus = sessionStorage.getItem('contentStatus');
+    $(document).ready(function () {
+        $('#myModal').modal('show');
+        // Hiển thị nội dung từ trang 1
+        document.getElementById('content').innerHTML = contentStatus
+
+        // Bắt sự kiện khi modal được đóng
+        $('#myModal').on('hidden.bs.modal', function () {
+            // Chuyển hướng về trang 1 khi modal được đóng
+            window.location.href = `/status`;
+        });
+    });
+
+</script>
+<script>
+    var select = document.getElementById('select')
+    var getValue = select.getAttribute('getValue')
+    function showSelected(showElement, value) {
+        valueFromDatabase = value
+        // Lấy tham chiếu đến element select
+        var selectElement = showElement
+
+        // Duyệt qua từng option trong select
+        for (var i = 0; i < selectElement.options.length; i++) {
+            // So sánh giá trị của option với giá trị từ database
+            if (selectElement.options[i].value === valueFromDatabase) {
+                // Đặt thuộc tính selected cho option tương ứng
+                selectElement.options[i].selected = true;
+                break; // Dừng vòng lặp nếu đã tìm thấy giá trị
+            }
+        }
+    }
+    showSelected(select, getValue)
+</script>

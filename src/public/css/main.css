@@ -3,8 +3,9 @@
     background-color: rgb(255, 255, 255);
     border: 1px solid rgb(39, 111, 255);
 }
-.box-small-1{
-    
+
+.box-small-1 {
+
     border: 1px solid rgb(247, 247, 247);
     box-shadow: 0 0 5px rgba(121, 121, 121, 0.5);
 }
@@ -67,15 +68,25 @@
     color: red;
     font-size: 12px;
 }
-#myButtonSave{
+
+#myButtonSave {
     display: none;
 }
-#myButtonSend{
+
+#myButtonSend {
     display: none;
 }
-.border-comment{
+
+.border-comment {
     border: 1px solid rgb(243, 243, 243);
     border-radius: 5px;
     background-color: white;
     box-shadow: 0 0 5px rgba(121, 121, 121, 0.5);
+}
+
+#message-alert {
+    /* display: none; */
+}
+#editor{
+    display: none !important;
 }

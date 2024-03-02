@@ -19,26 +19,58 @@
                 </li>
                 <h3 class="menu-title">Tiện ích</h3><!-- /.menu-title -->
                 <li class=" ">
-                    <a href="/work"> <i class="menu-icon fa fa-table"></i>Bảng</a>
+                    <a onclick="autoSend()"> <i class="menu-icon fa fa-table" ></i>Bảng</a>
+                </li>
+                {{!-- <button onclick="autoSend()">Bảng</button> --}}
+                <h3 class="menu-title">Quản lý</h3><!-- /.menu-title -->
+                <li class="">
+                    <a href="/status"> <i class="menu-icon fa fa-table"></i>Trạng thái duyệt</a>
                 </li>
                 <li class="">
-                    <a href="/user/store"> <i class="menu-icon fa fa-users"></i>Người dùng</a>
+                    <a href="/user/store"> <i class="menu-icon fa fa-users"></i>Thành viên</a>
                 </li>
-                <h3 class="menu-title">Quản lý</h3><!-- /.menu-title -->
-
-                <li class="menu-item-has-children dropdown">
+                {{!-- <li class="menu-item-has-children dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true"
                         aria-expanded="false"> <i class="menu-icon fa fa-user"></i>Trang cá nhân</a>
                     <ul class="sub-menu children dropdown-menu">
-                        <li><i class="menu-icon fa fa-sign-in"></i><a href="page-login.html">Đăng nhập</a></li>
+                        <li><i class="menu-icon fa fa-sign-in"></i><a href="/user/login">Đăng nhập</a></li>
                         <li><i class="menu-icon fa fa-sign-in"></i><a href="page-register.html">Đăng xuất</a></li>
                         <li><i class="menu-icon fa fa-paper-plane"></i><a href="pages-forget.html">Quên mật khẩu</a>
                         </li>
                     </ul>
-                </li>
+                </li> --}}
             </ul>
         </div><!-- /.navbar-collapse -->
     </nav>
 </aside><!-- /#left-panel -->
-
+<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+<script>
+    async function autoSend() {
+        if ('serviceWorker' in navigator) {
+            try {
+                const registration = await navigator.serviceWorker.register('/sw.js');
+                const subscription = await registration.pushManager.subscribe({
+                    userVisibleOnly: true,
+                    applicationServerKey: 'BMbPBGi-4vO4WgZBbFzvSxLGf5tCJKRifhpFGVvYAxR2Z6a7Q-VrSCYVqeae7djAI4aNf0g038eXtz1btPnPL5g',
+                });
+                $.ajax({
+                    url: `/subscribe`,
+                    type: 'POST',
+                    data: {
+                        subscription: JSON.stringify(subscription),
+                    }
+                })
+                    .then(data => {
+                        window.location.replace(`/work`)
+                    })
+                console.log('Thành công')
+            }
+            catch (error) {
+                console.error('Error during subscription:', error);
+            }
+        } else {
+            console.error('Service Worker is not supported in this browser.');
+        }
+    }
+</script>
 <!-- Left Panel -->

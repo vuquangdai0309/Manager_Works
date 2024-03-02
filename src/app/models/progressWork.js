@@ -30,5 +30,17 @@ const ProgressWorkModel = {
         const values = [progress_work.title, progress_work.slug, progress_work.date, progress_work_id];
         connection.query(query, values, callback);
     },
+
+    // thêm mô tả
+    addDescribe: (describe, callback) => {
+        const query = 'INSERT INTO `describe` (content,progress_work_id,filepdf) VALUES (?,?,?)';
+        const values = [describe.content, describe.progress_work_id, describe.filepdf];
+        connection.query(query, values, callback);
+    },
+
+    getDescribe_With_Id: (Id, callback) => {
+        const query = 'SELECT * FROM `describe` WHERE progress_work_id  =? '
+        connection.query(query, [Id], callback);
+    },
 }
 module.exports = ProgressWorkModel

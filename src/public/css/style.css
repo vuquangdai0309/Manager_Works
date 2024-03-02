@@ -5911,7 +5911,7 @@ header .form-inline .search-form.close {
 }
 
 .header-left .dropdown .dropdown-menu .dropdown-item .message .name {
-  margin-top: -5px;
+  margin-top: 5px;
 }
 
 .header-left .dropdown .dropdown-menu .dropdown-item .message .time {

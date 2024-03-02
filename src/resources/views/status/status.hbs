@@ -1,0 +1,92 @@
+{{>sidebar}}
+<div id="right-panel" class="right-panel">
+    {{> header}}
+    <div id="content" class="content mt-3">
+        <div class="animated fadeIn">
+            <div class="row">
+
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <strong class="card-title">Trạng thái phê duyệt</strong>
+                        </div>
+                        <div class="card-body">
+                            <table id="bootstrap-data-table-export" class="table table-striped table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>STT</th>
+                                        <th>Người tạo</th>
+                                        <th>Công việc</th>
+                                        <th>Người muốn thêm</th>
+                                        <th>Ngày thêm</th>
+                                        <th>Trạng thái</th>
+                                        <th>Phê duyệt trạng thái</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {{#each data }}
+                                    <tr>
+                                        <th>{{sum @index 1}}</th>
+                                        <td>{{this.nameUser}}</td>
+                                        <td>{{this.title}}</td>
+                                        <td>{{this.nameUserSend}}</td>
+                                        <td>{{this.date}}</td>
+                                        <td>{{this.status}}</td>
+                                        <td><i class="fa fa-edit" style="color: green; font-size:24px"
+                                                onclick="changePageEdit('{{this._id}}')" id="status-{{this._id}}"
+                                                slug="{{this._id}}"></i></td>
+                                    </tr>
+                                    {{/each}}
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                            <div class="col-md-12 d-flex justify-content-center mb-3">
+                                <nav aria-label="Page navigation ">
+                                    <ul class="pagination ">
+                                        {{#if pagination.prev}}
+                                        <li class="page-item">
+                                            <a class="page-link" href="/status?page={{pagination.prev}}"
+                                                aria-label="Previous">
+                                                <span aria-hidden="true">&laquo;</span>
+                                            </a>
+                                        </li>
+                                        {{/if}}
+
+                                        {{#each pagination.pages}}
+                                        <li class="page-item {{#if this.active}}active{{/if}}">
+                                            <a class="page-link"
+                                                href="/status?page={{this.number}}">{{this.number}}</a>
+                                        </li>
+                                        {{/each}}
+
+                                        {{#if pagination.next}}
+                                        <li class="page-item">
+                                            <a class="page-link" href="/status?page={{pagination.next}}"
+                                                aria-label="Next">
+                                                <span aria-hidden="true">&raquo;</span>
+                                            </a>
+                                        </li>
+                                        {{/if}}
+                                    </ul>
+                                </nav>
+                            </div>
+                        
+                    </div>
+                </div>
+            </div>
+        </div><!-- .animated -->
+    </div><!-- .content -->
+</div>
+
+<script>
+    function changePageEdit(ID) {
+        const getIdStatus = document.getElementById('status-' + ID)
+        const slug = getIdStatus.getAttribute('slug')
+        const getContent = document.getElementById('content')
+        // Lưu nội dung vào sessionStorage
+        sessionStorage.setItem('contentStatus', getContent.innerHTML);
+        // Chuyển hướng đến trang edit
+        window.location.href = `/status/${slug}/edit`;
+    }
+</script>

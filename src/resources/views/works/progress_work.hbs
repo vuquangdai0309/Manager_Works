@@ -9,6 +9,45 @@
                     <h1 style="font-weight:600">{{work.title}}</h1>
                 </div>
             </div>
+
+            <div class=" float-right ">
+                <div class="page-title">
+                    <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#exampleModal"
+                        data-bs-whatever="@getbootstrap"><i class="fa fa-user"></i> Thêm thành viên</button>
+                </div>
+            </div>
+            <div class="header-left">
+                <div class="dropdown for-message float-right float-right" style="margin-right: 30px;">
+                    <button class="btn btn-secondary dropdown-toggle" type="button" id="message1" data-toggle="dropdown"
+                        aria-haspopup="true" aria-expanded="false">
+                        <i class="fa fa-users"> Thành viên</i>
+                        <span class="count bg-primary">{{count}}</span>
+                    </button>
+                    <div class="dropdown-menu" aria-labelledby="message">
+                        <p class="red" style="color:black"> Các thành viên</p>
+                        {{#each member}}
+                        <a class="dropdown-item media " href="#" style=" border-top: 1px solid #cfcfcf;">
+                            <span class="photo media-left"><img alt="avatar" src="/img/admin.png"></span>
+                            <span class="message media-body">
+                                <span class="name float-left">{{this.username}}</span>
+                            </span>
+                        </a>
+
+                        {{/each }}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-12">
+            <div class="float-right " id="alertMessage" style="display: none;">
+                <div class="sufee-alert alert with-close alert-success alert-dismissible fade show">
+                    <span class="badge badge-pill badge-success">Thông báo</span>
+                    <span id="message"></span>
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+            </div>
         </div>
 
         <div class="content mt-3 ">
@@ -34,7 +73,8 @@
                                                 <div class="stat-text">{{progress_work_title}}
                                                 </div>
                                                 <span class="badge  " style="background-color:#216e4e ;color:white"> <i
-                                                        class="bi bi-clock-fill" style="margin-right: 5px;"></i>{{progress_work_date}}</span>
+                                                        class="bi bi-clock-fill"
+                                                        style="margin-right: 5px;"></i>{{progress_work_date}}</span>
 
                                                 <span class="badge badge-pill badge-light"><i class="bi bi-chat">
                                                         {{comment_count}}</i></span>
@@ -99,13 +139,97 @@
         </div>
     </div>
 </div>
+{{!-- Form thêm thành viên --}}
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Thêm thành viên </h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label for="recipient-name" class="col-form-label">Nhập Email thành viên:</label>
+                    <input type="text" class="form-control" id="searchInput" oninput="searchUsers()">
+
+                    <input type="text" id="selectedUser" readonly>
+                    <br>
+                    <ul class="list-group " id="userList">
+                    </ul>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Đóng</button>
+                <button type="button" class="btn btn-primary" onclick="addMember()">Đồng ý</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
 <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+
 <script>
+    function searchUsers() {
+        const searchTerm = document.getElementById('searchInput').value;
+        if (searchTerm.trim() === '') {
+            // Nếu ô input trống, có thể xóa danh sách hiện tại hoặc giữ nguyên
+            clearUserList();
+            return;
+        }
+        // Hạn chế số lượng kết quả hiển thị
+        const maxResults = 3;
+
+        $.ajax({
+            type: 'POST',
+            url: '/user/search',
+            data: { searchTerm: searchTerm },
+            success: function (data) {
+                const userList = document.getElementById('userList');
+                userList.innerHTML = '';
+
+                // Hiển thị tối đa 'maxResults' kết quả
+                for (let i = 0; i < Math.min(data.length, maxResults); i++) {
+                    const user = data[i];
+                    const listItem = document.createElement('li');
+                    listItem.className = 'list-group-item'
+
+                    listItem.textContent = user.email;
+                    listItem.onclick = function () {
+                        selectUser(user.email, listItem)
+                    }
+                    userList.appendChild(listItem);
+                };
+            },
+            error: function (err) {
+                console.error('Lỗi Ajax:', err);
+            }
+        });
+    }
+    // Hàm để truyền giá trị vào ô input tìm kiếm và xóa li
+    function selectUser(username, listItem) {
+        document.getElementById('searchInput').value = username;
+        // Xóa phần tử li khỏi danh sách
+        const userList = document.getElementById('userList');
+        userList.innerHTML = ''
+    }
+    // Hàm để xóa danh sách người dùng
+    function clearUserList() {
+        const userList = document.getElementById('userList');
+        userList.innerHTML = '';
+    }
+</script>
+
+<script>
+    const getContent = document.getElementById('content')
+    const slugWork = getContent.getAttribute('slug_Work')
+
+
     function changePage(ProgressId) {
-        const getContent = document.getElementById('content')
+
         const progressId = document.getElementById('btn-' + ProgressId)
         const getSlug = progressId.getAttribute('slug')
-        const slugWork = getContent.getAttribute('slug_Work')
+
 
 
         // lấy slug work lưu vào sessionStorage
@@ -116,24 +240,36 @@
         // Chuyển hướng đến trang edit
         window.location.href = `/work/${getSlug}/edit`;
     }
-</script>
 
-
-{{!-- [PUT] chỉnh sửa dữ liệu --}}
-<script>
-    const exampleModal = document.getElementById('exampleModal')
-    if (exampleModal) {
-        exampleModal.addEventListener('show.bs.modal', event => {
-            const button = event.relatedTarget
-            const recipient = button.getAttribute('data-bs-id')
-            console.log(recipient)
-            const btn_accept = document.getElementById('btn_accept')
-            btn_accept.onclick = function () {
-
+    // thêm thành viên
+    function addMember() {
+        const getValue = document.getElementById('searchInput').value;
+        $.ajax({
+            url: `/work/${slugWork}/createMember`,
+            type: 'POST',
+            data: {
+                email: getValue
             }
-
         })
+            .then(data => {
+                if (data.success) {
+                    const alertMessageElement = $('#alertMessage');
+
+                    const message = $('#message')
+                    message.text(data.message)
+                    // Hiển thị modal thông báo
+                    alertMessageElement.show();
+
+                    //  window.location.replace(`/work/${slugWork}/detail`)
+                    setTimeout(function () {
+                        console.log('Attempting to hide modal');
+                        jQuery('#exampleModal').modal('hide');
+                    }, 1000)
+
+                }
+            })
     }
+
 </script>
 
 
@@ -248,7 +384,5 @@
             toggleButton.style.color = 'rgb(110, 110, 110)'
         }
     }
-
-
 
 </script>

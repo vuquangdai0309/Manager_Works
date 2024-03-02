@@ -45,7 +45,6 @@ class UserController {
             }
         })
     }
-
     //[post] form register
     Register(req, res, next) {
         var email = req.body.email
@@ -82,12 +81,35 @@ class UserController {
     }
     // [GET] get all User
     store(req, res) {
-        Account.getAllUser((err, data) => {
+        const page = parseInt(req.query.page) || 1; // Trang hiện tại
+        const pageSize = 8; // Kích thước trang
+        const startIndex = (page - 1) * pageSize;
+        const endIndex = page * pageSize;
+        Account.getAllUser((err, results) => {
             if (err) {
                 console.log('Lỗi truy vấn', err)
             }
             else {
-                res.render('user/store', { data })
+                const totalPages = Math.ceil(results.length / pageSize);
+                const pages = Array.from({ length: totalPages }, (_, index) => {
+                    return {
+                        number: index + 1,
+                        active: index + 1 === page,
+                        isDots: index + 1 > 5
+                    };
+                });
+                const paginatedData = results.slice(startIndex, endIndex);
+                // Chuẩn bị dữ liệu để truyền vào template
+                const viewData = {
+                    data: paginatedData,
+
+                    pagination: {
+                        prev: page > 1 ? page - 1 : null,
+                        next: endIndex < results.length ? page + 1 : null,
+                        pages: pages,
+                    },
+                };
+                res.render('user/store', viewData)
             }
         })
     }
@@ -121,7 +143,7 @@ class UserController {
             }, err => {
                 if (err) {
                     console.log('Lỗi truy vấn', err)
-                }else{
+                } else {
                     res.redirect('/user/store')
                 }
             })
@@ -169,7 +191,6 @@ class UserController {
             }
         })
     }
-
     // [get] forget PASSWORD
     showforgot(req, res) {
         res.render('user/forgotPassword')
@@ -240,7 +261,18 @@ class UserController {
             }
         })
     }
+    searchEmail(req, res) {
+        const searchEmail = req.body.searchTerm
+        Account.searchEmail(searchEmail, (err, data) => {
+            if (err) {
+                console.log('Lỗi truy vấn', err)
+            }
+            else {
+                res.json(data)
+            }
+        })
+    }
+   
+
 }
-
-
 module.exports = new UserController

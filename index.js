@@ -9,12 +9,17 @@ const bodyParser = require('body-parser');
 const morgan = require('morgan')
 const cookieParser = require('cookie-parser')
 const methodOverride = require('method-override')
+
+//app.use(bodyParser.json()); 
 app.use(express.urlencoded({
     extended: true
 }))
 app.use(bodyParser.urlencoded({ extended: false }));
 app.engine('hbs', handlebars.engine({
     extname: '.hbs',
+    helpers: {
+        sum: (a, b) => a + b,
+    }
 }));
 app.set('view engine', 'hbs');
 app.set('views', path.join(__dirname, 'src\\resources\\views'));
@@ -27,8 +32,12 @@ app.use(methodOverride('_method'))
 app.use(cookieParser())
 //morgan console log
 app.use(morgan('combined'))
+
+//đường dẫn đến file ảnh
+app.use('/uploads', express.static('uploads'))
 route(app)
 db.connection;
+
 app.listen(port, () => {
     console.log(` http://localhost:${port}/`)
 })

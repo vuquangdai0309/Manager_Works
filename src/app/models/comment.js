@@ -11,7 +11,7 @@ const CommentModle = {
         FROM comment
         JOIN progress_works ON comment.progress_work_id = progress_works._id
         JOIN account ON comment.user_id = account._id
-        WHERE progress_works._id = ?            
+        WHERE progress_works._id = ?        
         ORDER BY comment.createAt DESC
         `
         connection.query(query, progress_work_id, callback);
